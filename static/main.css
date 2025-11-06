@@ -1,0 +1,205 @@
+.container{max-width: 800px; margin-left: auto; margin-right: auto; padding-left: 5px; padding-right: 5px;}
+.reportProj{
+    color: rgb(19, 134, 19);
+    border-radius: 5px;
+    margin-left: 10px;
+    opacity: 0.8;
+}
+.reportProj::before{content: '(';}
+.reportProj::after{content: ')';}
+.reportSubProj{
+    color: darkgreen;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+.reportSubProj::before{
+    content: "/";
+}
+
+.btn{
+    background-color: rgb(128, 218, 142);
+    border: 2px solid green;
+    border-radius: 5px;
+    padding: 1px 4px;
+    border-radius: 5px; 
+    box-shadow: 3px 3px 0px 0px rgb(0, 80, 0);
+    font-weight: normal;
+    color: black;
+    text-decoration: none;
+}
+.btn:active{
+    position: relative;
+    top: 3px;
+    left: 3px;
+    box-shadow: none;
+}
+.btn-nonRelative:active{
+    position: fixed !important;
+    bottom: 7px !important;
+    right: 7px !important;
+    box-shadow: none;
+}
+.btn-nonRelative-2:active{
+    position: fixed !important;
+    right: 60px !important; bottom: 7px !important;
+    box-shadow: none;
+}
+.btn-orange{
+    background-color: rgb(255, 209, 152);
+    border-color: rgb(215, 118, 0);
+    box-shadow: 3px 3px 0px 0px rgb(150, 83, 0);
+    color: rgb(0, 0, 0);
+}
+.btn-blue{
+    background-color: rgb(200, 234, 255);
+    border-color: rgb(52, 153, 215) !important;
+    box-shadow: 3px 3px 0px 0px rgb(25, 126, 188);
+    color: rgb(0, 0, 0);
+}
+.btn-red{
+    background-color: rgb(255, 170, 187);
+    border-color: rgb(192, 48, 77);
+    box-shadow: 3px 3px 0px 0px rgb(151, 14, 42);
+}
+.CodeMirror{
+    font-size: 18px;
+    height: 100% !important;
+}
+.cm-s-neo.CodeMirror{
+    color: black !important;
+}
+
+.cm-s-material-darker.CodeMirror, .cm-s-neo.CodeMirror {
+    line-height: 1.3;
+}
+
+.cm-task_done{
+    text-decoration: line-through;
+    text-decoration-thickness: 1px;
+}
+.cm-heading{
+    color: rgb(39, 85, 149) !important;
+    font-size: 25px !important;   
+    width: 100% !important;
+}
+.outline{
+    position: fixed;
+    right: 20px;
+    float: right;
+    top: 10px;
+    z-index: 10;
+}
+.outline ol li > a{
+    text-decoration: underline dotted black;
+    text-decoration-thickness: 2px;
+    cursor: pointer;
+}
+.cm-heading2{
+    color: rgb(39, 85, 149) !important;
+    text-decoration: underline dotted rgb(39, 85, 149) !important;   
+    text-decoration-thickness: 2px !important;
+}
+.btn-submit-mobile{
+    display: initial;
+}
+.btn-up { display: none; }
+@media (max-width: 435px){
+    .revPanel > span { display: none; }
+    .btn-submit-mobile{
+        display: initial;
+    }
+    .btn-up { display: initial; }
+}
+@media (max-width: 1480px) {
+    .outline{
+        position: initial;
+        border: 2px solid white;
+        float: none;
+        max-width: 800px; 
+        margin-left: auto; 
+        margin-right: auto; 
+        padding-left: 5px; 
+        padding-right: 5px;
+    }
+    .outline > .btn {
+        display: none;
+    }
+    .btn-up { display: initial; }
+}
+@media (prefers-color-scheme: dark) {
+    .cm-heading{
+        color: cadetblue !important;
+    }
+    .cm-heading2{
+        /*text-decoration: underline;
+        text-decoration-thickness: 3px;*/
+        color: cadetblue !important;
+        text-decoration: underline dotted cadetblue !important;   
+        text-decoration-thickness: 2px !important;
+    }
+    .outline{
+        /*border: 1.5px solid gray;border-radius: 5px;*/
+    }
+    .outline ol li > a{
+        text-decoration: underline dotted white;
+    }
+    .btn{
+        background-color: #212121;
+        color: rgb(0, 255, 0);
+    }
+    .btn-orange{
+        background-color: rgba(0, 0, 0, 0.307);
+        border-color: rgb(215, 118, 0);
+        box-shadow: 3px 3px 0px 0px rgb(150, 83, 0);
+        color: rgb(255, 145, 0);
+    }
+    .btn-blue{
+        background-color: #212121;
+        border-color: rgb(52, 153, 215);
+        box-shadow: 3px 3px 0px 0px rgb(25, 126, 188);
+        color: rgb(0, 157, 255) !important;
+    }
+    .btn-red{
+        color: rgb(192, 48, 77);
+    }
+    .revPanel{
+        background-color: transparent !important;
+        color: white !important;
+    }
+    .revPanel span {
+        color: rgb(214, 214, 214) !important;
+    }
+    body{
+        background-color: #212121;
+        color: #bdbdbd;
+    }
+    .report{
+        background-color: #212121 !important;
+        color: #bdbdbd;
+    }
+    .cm-s-material-darker.CodeMirror{
+        color: #bdbdbd !important;
+    }
+}
+
+.cssError{
+    color: Crimson; 
+    background-color: rgb(255, 224, 230); 
+    font-size: 1.2em; 
+    padding: 5px 10px; 
+    border: 1px solid Crimson; 
+    position: fixed;
+    left: 20px;
+    float: left;
+    top: 0px;
+    max-width: 200px;
+    z-index: 10;
+}
+
+/* Task custom */
+.cm-task_tag{
+  color: DarkGreen;
+}
+.cm-task_day{
+  color: CornflowerBlue;
+}

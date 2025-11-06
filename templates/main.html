@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tasks</title>
+    <link rel="stylesheet" href="/static/codemirror/theme/eclipse.css">
+    <link rel="stylesheet" href="/static/codemirror/theme/neo.css">
+    <link rel="stylesheet" href="/static/codemirror/theme/material-darker.css">
+    <link rel="stylesheet" href="/static/main.css">
+</head>
+<body onload="window.scrollTo(0, {{scroll}});">
+<style>
+    {{css|safe}}
+</style>
+{% if css == "" %}
+<p style="color: Crimson; 
+        background-color: rgb(255, 224, 230); 
+        font-size: 1.2em; 
+        padding: 5px 10px; 
+        border: 1px solid Crimson; 
+        position: fixed;
+        left: 20px;
+        float: left;
+        top: 0px;
+        max-width: 200px;
+        z-index: 10;">❌ Custom CSS could not be loaded! Check if there are any forbidden elements</p>
+{% endif %}
+<div class="container">
+<div style="background-color: transparent">
+    <b style="position: relative; top: 5px;">Work List </b>
+    <!--<a href="#" style="float: right;" class="btn"><svg xmlns="http://www.w3.org/2000/svg" style="position: relative; top: 2px;" width="16" height="16" fill="currentColor" class="bi bi-recycle" viewBox="0 0 16 16"><path d="M9.302 1.256a1.5 1.5 0 0 0-2.604 0l-1.704 2.98a.5.5 0 0 0 .869.497l1.703-2.981a.5.5 0 0 1 .868 0l2.54 4.444-1.256-.337a.5.5 0 1 0-.26.966l2.415.647a.5.5 0 0 0 .613-.353l.647-2.415a.5.5 0 1 0-.966-.259l-.333 1.242zM2.973 7.773l-1.255.337a.5.5 0 1 1-.26-.966l2.416-.647a.5.5 0 0 1 .612.353l.647 2.415a.5.5 0 0 1-.966.259l-.333-1.242-2.545 4.454a.5.5 0 0 0 .434.748H5a.5.5 0 0 1 0 1H1.723A1.5 1.5 0 0 1 .421 12.24zm10.89 1.463a.5.5 0 1 0-.868.496l1.716 3.004a.5.5 0 0 1-.434.748h-5.57l.647-.646a.5.5 0 1 0-.708-.707l-1.5 1.5a.5.5 0 0 0 0 .707l1.5 1.5a.5.5 0 1 0 .708-.707l-.647-.647h5.57a1.5 1.5 0 0 0 1.302-2.244z"/></svg></a>-->
+    {% if rev_info != '' %}
+    <!--only show rev panel if git is enabled-->
+    <div class="revPanel" style="/*margin-right: 5px;*/ float: right; background-color: rgb(255, 209, 152);  border-radius: 5px; position: relative; top: 3px;">
+        <a href="/commit" style="float: right; position: relative; bottom: 3px; right: 3px;" class="btn btn-orange">
+            <!--<svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" style="position: relative; top: 2px; " width="16" height="16" fill="rgb(94, 52, 0" class="bi bi-floppy2" viewBox="0 0 16 16">
+                <path d="M1.5 0h11.586a1.5 1.5 0 0 1 1.06.44l1.415 1.414A1.5 1.5 0 0 1 16 2.914V14.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 14.5v-13A1.5 1.5 0 0 1 1.5 0M1 1.5v13a.5.5 0 0 0 .5.5H2v-4.5A1.5 1.5 0 0 1 3.5 9h9a1.5 1.5 0 0 1 1.5 1.5V15h.5a.5.5 0 0 0 .5-.5V2.914a.5.5 0 0 0-.146-.353l-1.415-1.415A.5.5 0 0 0 13.086 1H13v3.5A1.5 1.5 0 0 1 11.5 6h-7A1.5 1.5 0 0 1 3 4.5V1H1.5a.5.5 0 0 0-.5.5m9.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5z"/>
+              </svg>--> <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="16" height="16" class="bi bi-floppy2" viewBox="0 0 16 16" style="position: relative; top: 1px;">
+        <path d="M7.27 2.047a1 1 0 0 1 1.46 0l6.345 6.77c.6.638.146 1.683-.73 1.683H11.5v3a1 1 0 0 1-1 1h-5a1 1 0 0 1-1-1v-3H1.654C.78 10.5.326 9.455.924 8.816z"></path>
+</svg></a>
+        <span style="float: right; color: rgb(0, 0, 0); margin-right: 10px; margin-left: 5px; position: relative; top: 3px;">{{ rev_info }} </span>
+    </div>
+    {% endif %}
+    <!--<a href="#" style="float: right; margin-right: 8px;" class="btn btn-blue"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" style="position: relative; top: 3px; transform: rotate(180deg)" width="16" height="16" fill="rgb(94, 52, 0" class="bi bi-floppy2" viewBox="0 0 16 16">
+        <path d="M7.27 2.047a1 1 0 0 1 1.46 0l6.345 6.77c.6.638.146 1.683-.73 1.683H11.5v3a1 1 0 0 1-1 1h-5a1 1 0 0 1-1-1v-3H1.654C.78 10.5.326 9.455.924 8.816z"/>
+</svg>
+      </svg></a>
+    <a href="/timer" style="float: right; margin-right: 8px;" class="btn btn-red">
+        <svg xmlns="http://www.w3.org/2000/svg" style="position: relative; top: 2px; right: 0px;" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
+            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/>
+        </svg>
+    </a>-->
+</div>
+<!--<div>
+    <b>Work Lists</b><i style="margin-left: 20px">press 'Esc' to go back</i>
+</div>--><br>
+</div>
+
+
+<div style="margin-bottom: 25px;">
+<pre style="font-size: 18px; max-width: 100%;white-space: pre-wrap;white-space: -moz-pre-wrap;white-space: -pre-wrap;white-space: -o-pre-wrap;word-wrap: break-word;">
+{{report|safe}}
+</pre>
+</div>
+
+<div class="container">
+<form method="post" action="/submit" id="fm">
+<input type="hidden" name="scrollPos" id="scrollPos">
+<textarea style="width: 100%; height: 100%;" id="textbox" name="content" wrap="soft" rows="30" cols="70" style="font-size: 18px">{{ content }}</textarea>
+<button type="submit" class="btn" style="margin-bottom: 20px;"><svg xmlns="http://www.w3.org/2000/svg" style="position: relative; top: 2px; " width="16" height="16" fill="currentColor" class="bi bi-floppy2" viewBox="0 0 16 16">
+    <path d="M1.5 0h11.586a1.5 1.5 0 0 1 1.06.44l1.415 1.414A1.5 1.5 0 0 1 16 2.914V14.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 14.5v-13A1.5 1.5 0 0 1 1.5 0M1 1.5v13a.5.5 0 0 0 .5.5H2v-4.5A1.5 1.5 0 0 1 3.5 9h9a1.5 1.5 0 0 1 1.5 1.5V15h.5a.5.5 0 0 0 .5-.5V2.914a.5.5 0 0 0-.146-.353l-1.415-1.415A.5.5 0 0 0 13.086 1H13v3.5A1.5 1.5 0 0 1 11.5 6h-7A1.5 1.5 0 0 1 3 4.5V1H1.5a.5.5 0 0 0-.5.5m9.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5z"/>
+  </svg> Guardar</button>
+  <a href="#" class="btn"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" style="position: relative; top: 2px;" fill="currentColor" class="bi bi-arrow-up" viewBox="0 0 16 16">
+    <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5"/>
+  </svg></a>
+  <button type="submit" class="btn-nonRelative btn-blue btn-submit-mobile" style="border: 2px solid;border-radius: 5px;padding: 1px 4px;border-radius: 5px; font-weight: normal;color: black;text-decoration: none; position: fixed; right: 10px; bottom: 10px;"><svg xmlns="http://www.w3.org/2000/svg" style="position: relative; top: 2px; " width="32" height="32" fill="currentColor" class="bi bi-floppy2" viewBox="0 0 16 16">
+    <path d="M1.5 0h11.586a1.5 1.5 0 0 1 1.06.44l1.415 1.414A1.5 1.5 0 0 1 16 2.914V14.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 14.5v-13A1.5 1.5 0 0 1 1.5 0M1 1.5v13a.5.5 0 0 0 .5.5H2v-4.5A1.5 1.5 0 0 1 3.5 9h9a1.5 1.5 0 0 1 1.5 1.5V15h.5a.5.5 0 0 0 .5-.5V2.914a.5.5 0 0 0-.146-.353l-1.415-1.415A.5.5 0 0 0 13.086 1H13v3.5A1.5 1.5 0 0 1 11.5 6h-7A1.5 1.5 0 0 1 3 4.5V1H1.5a.5.5 0 0 0-.5.5m9.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5z"/>
+  </svg></button>
+</form>
+<a class="btn-nonRelative-2 btn-blue btn-submit-mobile btn-up" style="border: 2px solid;border-radius: 5px;padding: 1px 4px;border-radius: 5px; font-weight: normal;color: black;text-decoration: none; position: fixed; right: 63px; bottom: 10px;" href="#">
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" style="position: relative; top: 2px;" fill="currentColor" class="bi bi-arrow-up" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5"/>
+    </svg>
+</a>
+
+</div>
+<script src="/static/codemirror/lib/codemirror.js"></script>
+    <link rel="stylesheet" href="/static/codemirror/lib/codemirror.css">
+    <script src="/static/codemirror/mode/htmlembedded/htmlembedded.js"></script>
+    <script src="/static/codemirror/mode/htmlmixed/htmlmixed.js"></script>
+    <script src="/static/codemirror/mode/xml/xml.js"></script>
+    <script src="/static/codemirror/mode/css/css.js"></script>
+    <script src="/static/codemirror/addon/edit/closebrackets.js"></script>
+    <script src="/static/codemirror/addon/edit/closetag.js"></script>
+    <script src="/static/codemirror/addon/edit/matchbrackets.js"></script>
+    <script src="/static/codemirror/addon/edit/matchtags.js"></script>
+    <script src="/static/todo.js"></script>
+    <script>
+        document.getElementById('fm').addEventListener("submit", (ev) => {
+            let pos = document.documentElement.scrollTop || document.body.scrollTop;
+            document.getElementById('scrollPos').value = pos;
+            return true;
+        });
+
+
+        //let ele = document.getElementById('fm').onsubmit = function onSubmit(form){
+        //    let pos = document.documentElement.scrollTop || document.body.scrollTop;
+        //    document.getElementById('scrollPos').value = pos;
+        //    return false;
+        //};  
+    </script>
+    <script>
+        //document.documentElement.scrollTop = document.body.scrollTop = {{scroll}};
+        var myCodeMirror = CodeMirror.fromTextArea(document.getElementById("textbox"), {
+            lineNumbers: false,
+            spellcheck: true,
+            mode:  "todocss",
+            size: "30px",
+            theme: window.matchMedia('(prefers-color-scheme: dark)').matches ? "material-darker" : "neo" ,
+            autoCloseBrackets: true,
+            lineWrapping: true,
+            extraKeys: {
+                "Tab": function(cm){
+                  cm.replaceSelection("    " , "end");
+                }
+            }
+        });
+
+        // source: https://codemirror.net/5/demo/indentwrap.html
+        var charWidth = myCodeMirror.defaultCharWidth(), basePadding = 4;
+        myCodeMirror.on("renderLine", function(cm, line, elt) {
+            var off = CodeMirror.countColumn(line.text, null, cm.getOption("tabSize")) * charWidth;
+            elt.style.textIndent = "-" + off + "px";
+            elt.style.paddingLeft = (basePadding + off) + "px";
+          });
+        myCodeMirror.refresh();
+
+    </script> 
+<script>
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+        myCodeMirror.setOption("theme", window.matchMedia('(prefers-color-scheme: dark)').matches ? "material-darker" : "neo")
+    });
+</script>
+
+<script>
+document.getElementById('textbox').addEventListener('keydown', function(e) {
+    if (e.key == 'Tab') {
+        e.preventDefault();
+        var start = this.selectionStart;
+        var end = this.selectionEnd;
+    
+        // set textarea value to: text before caret + tab + text after caret
+        this.value = this.value.substring(0, start) +
+        "    " + this.value.substring(end);
+    
+        // put caret at right position again
+        this.selectionStart =
+        this.selectionEnd = start + 4;
+    }
+    if(event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
+        event.target.form?.dispatchEvent(new Event('submit'));
+    }
+    });
+document.addEventListener('keydown', function(e) {
+    if(event.key === "Escape"){
+        history.back();
+    } else if(event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
+        //event.target.form?.submit();
+        event.target.form?.dispatchEvent(new Event('submit'));
+    }
+});
+</script>
+<script>
+    function scrollHere(content){
+        let headings = [...document.getElementsByClassName('cm-heading'), ...document.getElementsByClassName('cm-heading2')];
+        for (const heading of headings) {
+            let valToCompare;
+            let control;
+            console.log(heading.innerText)
+            if(heading.innerText.length > 2 && heading.innerText[2]==">"){
+                valToCompare = heading.innerText.substring(3).trim();
+            } else {
+                valToCompare = heading.innerText.substring(2).trim();
+            }
+            if(content.length > 2 && content[2]==">"){
+                control = content.substring(3).trim()
+            } else {
+                control = content.substring(2).trim()
+            }
+            if(valToCompare === control){
+                heading.scrollIntoView();
+                break;
+            }
+        }
+    }
+</script>
+
+
+</body>
+</html>
