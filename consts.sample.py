@@ -2,8 +2,9 @@
 # TASKS CONFIGURATION FILE
 # 
 
-USERNAME=""
-PASSWORD=""
+# Auth
+USERNAME="" # <-- INSERT CREDENTIALS HERE
+PASSWORD="" # <-- INSERT CREDENTIALS HERE
 
 # Data folder
 # If git backup is enabled, this file should be the top-level directory of a
@@ -22,21 +23,15 @@ ENABLE_GIT=True
 #
 # Example using crontab:
 #   58 23 * * * curl http://localhost:5000/cleanup?code=<CODE>
-DAILY_CLEANUP_TRIGGER_CODE=""
+
+DAILY_CLEANUP_TRIGGER_CODE="" # <-- INSERT CODE HERE
 
 # Max number of lines the file can have
 FILE_MAX_LINES=1500
 
-# Currently all accounts lead to the same tasks page
-# Example credentials.json file
-# [
-#    {"user": "user1", "password": " ... "}
-# ]
-CREDENTIALS_FILE="credentials.json"
-
 # Select display language. This is used for the scheduling of events
 # `@segunda` -> `@monday`
-PORTUGUESE_LANG=True
+PORTUGUESE_LANG=False
 
 # Prevent <script> tags from being embedded in the file and executed.
 # Script execution can happen if the task is shown on the overview panel as it
