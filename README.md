@@ -17,7 +17,7 @@ The syntax is inspired by the [todo.txt](http://todotxt.org/) file format, with 
     [ ] this is a sub-task
 [w] work-in-progress
 [/] deferred/canceled task
-[x] compleated task
+[x] completed task
     with a description
 
 # Use `---` if the tasks below this point do not belong to any
@@ -45,7 +45,7 @@ The application uses the Flask framework for the server and stores the tasks in 
 > [!CAUTION]
 > This application uses HTTP Basic Authentication and therefore **must be served over HTTPS**. This guide assumes the application is deployed behind a **reverse proxy** with HTTPS enabled (such as Apache or Nginx).
 
-1. Clone de repository
+1. Clone the repository
 2. Download the most recent release of [CodeMirror 5](https://codemirror.net/5/) and place it under `static/codemirror`
     ```
     cd static
@@ -56,7 +56,7 @@ The application uses the Flask framework for the server and stores the tasks in 
 3. Rename `consts.sample.py` to `consts.py` and tweak the configurations
     + Generate a random string for cleanup endpoint (ex with: `openssl rand -hex 12`) and place it in the config file
     + Add username and password
-4. **(optional)** If backups are enabled, create and empty git repository and add a single remote 
+4. **(optional)** If backups are enabled, create an empty git repository and add a single remote 
 5. Add crontab job for the cleanup (or use other scheduling solution). Example:
     ```
     # Run every day at 23h58
@@ -73,7 +73,7 @@ The application uses the Flask framework for the server and stores the tasks in 
     gunicorn -w 1 -p 8000 'main:app' --daemon 
     ```
 
-## Local Developnt
+## Local Development
 Follow steps 1. to 6. (skip step 5. if not applicable).
 
 7. Start flask server
