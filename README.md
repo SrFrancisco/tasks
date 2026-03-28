@@ -55,7 +55,7 @@ The application uses the Flask framework for the server and stores the tasks in 
     ```
 3. Rename `consts.sample.py` to `consts.py` and tweak the configurations
     + Generate a random string for cleanup endpoint (ex with: `openssl rand -hex 12`) and place it in the config file
-    + Add username and password
+    + Create a `credentials.json` file and add username and password 
 4. **(optional)** If backups are enabled, create an empty git repository and add a single remote 
 5. Add crontab job for the cleanup (or use other scheduling solution). Example:
     ```

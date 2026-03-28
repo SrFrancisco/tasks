@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tasks</title>
+
     <link rel="stylesheet" href="/static/codemirror/theme/eclipse.css">
     <link rel="stylesheet" href="/static/codemirror/theme/neo.css">
     <link rel="stylesheet" href="/static/codemirror/theme/material-darker.css">
@@ -66,6 +67,7 @@
 
 <div class="container">
 <form method="post" action="/submit" id="fm">
+<input type="hidden" name="last_update" id="last_update" value="{{last_update}}">
 <input type="hidden" name="scrollPos" id="scrollPos">
 <textarea style="width: 100%; height: 100%;" id="textbox" name="content" wrap="soft" rows="30" cols="70" style="font-size: 18px">{{ content }}</textarea>
 <button type="submit" class="btn" style="margin-bottom: 20px;"><svg xmlns="http://www.w3.org/2000/svg" style="position: relative; top: 2px; " width="16" height="16" fill="currentColor" class="bi bi-floppy2" viewBox="0 0 16 16">
@@ -85,7 +87,7 @@
 </a>
 
 </div>
-<script src="/static/codemirror/lib/codemirror.js"></script>
+    <script src="/static/codemirror/lib/codemirror.js"></script>
     <link rel="stylesheet" href="/static/codemirror/lib/codemirror.css">
     <script src="/static/codemirror/mode/htmlembedded/htmlembedded.js"></script>
     <script src="/static/codemirror/mode/htmlmixed/htmlmixed.js"></script>
@@ -127,6 +129,7 @@
             }
         });
 
+        // Make wrapped text appear according to current ident lvl
         // source: https://codemirror.net/5/demo/indentwrap.html
         var charWidth = myCodeMirror.defaultCharWidth(), basePadding = 4;
         myCodeMirror.on("renderLine", function(cm, line, elt) {
@@ -144,9 +147,9 @@
 </script>
 
 <script>
-document.getElementById('textbox').addEventListener('keydown', function(e) {
-    if (e.key == 'Tab') {
-        e.preventDefault();
+document.getElementById('textbox').addEventListener('keydown', function(event) {
+    if (event.key == 'Tab') {
+        event.preventDefault();
         var start = this.selectionStart;
         var end = this.selectionEnd;
     
@@ -162,7 +165,7 @@ document.getElementById('textbox').addEventListener('keydown', function(e) {
         event.target.form?.dispatchEvent(new Event('submit'));
     }
     });
-document.addEventListener('keydown', function(e) {
+document.addEventListener('keydown', function(event) {
     if(event.key === "Escape"){
         history.back();
     } else if(event.key === "Enter" && (event.metaKey || event.ctrlKey)) {

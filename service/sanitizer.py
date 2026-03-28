@@ -35,6 +35,7 @@ CSSNode = Union[ # REF: tinycss2 Documentation
 
 ALLOWED_TAGS = deepcopy(nh3.ALLOWED_TAGS) # REF: https://github.com/messense/nh3/issues/74
 ALLOWED_TAGS.add("style")
+
 def sanitize_html(content:str) -> str:
     return nh3.clean(html=content,      # only allows single html line
                      tags=ALLOWED_TAGS,

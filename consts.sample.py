@@ -2,9 +2,12 @@
 # TASKS CONFIGURATION FILE
 # 
 
-# Auth
-USERNAME="" # <-- INSERT CREDENTIALS HERE
-PASSWORD="" # <-- INSERT CREDENTIALS HERE
+# Currently all accounts lead to the same tasks page
+# Example credentials.json file
+# [
+#    {"user": "user1", "password": " ... "},
+# ]
+CREDENTIALS_FILE="credentials.json"
 
 # Data folder
 # If git backup is enabled, this file should be the top-level directory of a
