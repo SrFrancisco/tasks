@@ -1,8 +1,9 @@
 import re
+from copy import deepcopy
 from datetime import datetime, timedelta
 from consts import *
-from .sanitizer import *
-from service.filemanager import *
+from service.filemanager import TaskList
+from service.sanitizer import *
 
 
 def parse_css(lines:list[str]) -> str:
@@ -13,19 +14,21 @@ def parse_css(lines:list[str]) -> str:
     return css_line
 
 
-def do_task_day_cleanup(lines:list[str]):
-    twoDaysAgo = getToday((datetime.now()-timedelta(days=2)).weekday())
-    for i in range(len(lines)):
-        if lines[i][0] != "#":
-            if "@"+twoDaysAgo in lines[i]:
-                if "[x]" in lines[i]:
-                    lines[i] = lines[i].replace("@"+twoDaysAgo, "").rstrip()+"\n"
-                else:
-                    lines[i] = lines[i].replace("@"+twoDaysAgo, "#overdue").rstrip()+"\n"
+def do_task_day_cleanup(taskLists: list[TaskList]):
+    def _cleanup(data:list[str]) -> list[str]:
+        lines = deepcopy(data)
+        for i in range(len(lines)):
+            if lines[i][0] != "#":
+                if "@"+twoDaysAgo in lines[i]:
+                    if "[x]" in lines[i]:
+                        lines[i] = lines[i].replace("@"+twoDaysAgo, "").rstrip()+"\n"
+                    else:
+                        lines[i] = lines[i].replace("@"+twoDaysAgo, "#overdue").rstrip()+"\n"
+        return lines
 
-    write_file = open(FILE_PATH+"/"+FILE_NAME, mode="w")
-    write_file.writelines(lines)
-    write_file.close()
+    twoDaysAgo = getToday((datetime.now()-timedelta(days=2)).weekday())
+    for taskList in taskLists:
+        taskList.do_in_txn(_cleanup)
 
 
 def getToday(date):
@@ -73,7 +76,7 @@ def getCurrentProject(index, lines) -> str:
         return "<span class=\"reportProj\">{}</span>".format(proj_tupl[0].replace("#>", "").lstrip().rstrip())
     elif(len(proj_tupl)==2):
         return "<span class=\"reportProj\">{}<span class=\"reportSubProj\">{}</span></span>".format(
-            proj_tupl[1].replace("#>", "").lstrip().rstrip(), 
+            proj_tupl[1].replace("#>", "").lstrip().rstrip(),
             proj_tupl[0].replace("#>>", "").lstrip().rstrip())
     else:
         raise Exception("Error")
@@ -242,7 +245,8 @@ def _parse_list(lines:list[str]):
             report_string += "<li><a role=\"button\" onclick=\"scrollHere('{}')\">{}</a></li>".format(heading, heading[2:].replace(" ",""))
     report_string+="</ol></aside>"
 
-    report_string = f'<div class="container"><div class="pin-board"><span>📌 Pinned tasks</span>\n{pin_string}</div></div>' + report_string
+    report_string = (f'<div class="container"><div class="pin-board"><span>📌 Pinned tasks</span>\n{pin_string}</div></div>' \
+                     if pin_string != '' else '') + report_string
 
     return [report_string]
 
@@ -281,6 +285,5 @@ def get_board(file_content:list[str]):
                 wip_list += [task.replace("[w]", "").lstrip().rstrip()]
             elif "[/]" in task:
                 deferred_list += [task.replace("[/]", "").lstrip().rstrip()]
-    
+
     return todo_list, done_list, deferred_list, wip_list
-    

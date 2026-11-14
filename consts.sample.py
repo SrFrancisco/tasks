@@ -2,20 +2,22 @@
 # TASKS CONFIGURATION FILE
 # 
 
-# Currently all accounts lead to the same tasks page
-# Example credentials.json file
-# [
-#    {"user": "user1", "password": " ... "},
-# ]
-CREDENTIALS_FILE="credentials.json"
-
 # Data folder
 # If git backup is enabled, this file should be the top-level directory of a
 # git repository with a configured remote
 FILE_PATH="data"
 
-# File to store todos
-FILE_NAME="todo.txt"
+# File to store todos {file: <file_name>, profile_name: <name>}
+# note: the file is relative to the FILE_PATH const
+PROFILES=[
+    {"file": "todo.txt", "profile_name": "Normal"}
+]
+assert len(PROFILES) > 0
+
+# You can define a custom rule for the default
+# profile, for example, based of time of day
+def DEFAULT_PROFILE_RULE(profile:list[dict[str,str]]) -> str:
+    return profile[0]['profile_name']
 
 # Enable git backups
 ENABLE_GIT=True
@@ -26,11 +28,17 @@ ENABLE_GIT=True
 #
 # Example using crontab:
 #   58 23 * * * curl http://localhost:5000/cleanup?code=<CODE>
-
-DAILY_CLEANUP_TRIGGER_CODE="" # <-- INSERT CODE HERE
+DAILY_CLEANUP_TRIGGER_CODE=""
 
 # Max number of lines the file can have
 FILE_MAX_LINES=1500
+
+# Currently all accounts lead to the same tasks page
+# Example credentials.json file
+# [
+#    {"user": "user1", "password": " ... "},
+# ]
+CREDENTIALS_FILE="credentials.json"
 
 # Select display language. This is used for the scheduling of events
 # `@segunda` -> `@monday`
@@ -77,3 +85,13 @@ CSS_ALLOWED_IDENT = (
     "content",
     "line-height"
 )
+
+# Caldav integration
+ENABLE_CALDAV=True
+CALDAV_SERVER_URL=""
+CALDAV_SERVER_USERNAME=""
+CALDAV_SERVER_PASSWORD=""
+CALDAV_CALENDAR_NAME=""
+CALDAV_DEFAULT_EVENT_DURATION_MIN=30
+CALDAV_ENABLE_VALARM=False
+CALDAV_NOTIFY_TIME="2M"

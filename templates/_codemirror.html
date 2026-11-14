@@ -1,0 +1,284 @@
+<script src="/static/codemirror/lib/codemirror.js"></script>
+<script src="/static/codemirror/mode/htmlembedded/htmlembedded.js"></script>
+<script src="/static/codemirror/mode/htmlmixed/htmlmixed.js"></script>
+<script src="/static/codemirror/mode/xml/xml.js"></script>
+<script src="/static/codemirror/mode/css/css.js"></script>
+<script src="/static/codemirror/addon/edit/closebrackets.js"></script>
+<script src="/static/codemirror/addon/edit/closetag.js"></script>
+<script src="/static/codemirror/addon/edit/matchbrackets.js"></script>
+<script src="/static/codemirror/addon/edit/matchtags.js"></script>
+<script src="/static/todo.js"></script>
+
+<style>
+    @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.2/font/bootstrap-icons.min.css");
+
+    .magic-link {
+        border: 1px solid lightgray;
+        color: inherit;
+        padding: 1px 3px;
+        text-decoration: none;
+    }
+
+    .magic-link:link,
+    .magic-link:visited {
+        color: inherit;
+    }
+
+    .magic-link:hover {
+        background-color: rgb(220, 236, 255);
+        transition: 0.5s;
+    }
+
+    .magic-link::before {
+        content: '🔗';
+        margin-right: 5px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        .magic-link {
+            border-color: rgb(87, 87, 87);
+        }
+
+        .magic-link:hover {
+            background-color: rgba(220, 236, 255, 0.218);
+        }
+    }
+
+    .magic-link-github::before {
+        content: '\F3ED';
+        font-family: "bootstrap-icons";
+        position: relative;
+        top: 3px;
+    }
+
+    .magic-link-jira::before {
+        content: '\F58C';
+        font-family: "bootstrap-icons";
+        position: relative;
+        top: 3px;
+        color: royalblue;
+    }
+</style>
+
+<script>
+    var marks = [];
+    var new_hints = [];
+
+
+    var magicLinkMarks = [];
+
+    const magicLinkTemplates = [
+        {
+            rgx: /^https:\/\/github\.com\/(?<user>[^\/]+)\/(?<repo>[A-Za-z0-9_.-]+)\/issues\/(?<issue>[0-9]+)$/,
+            func: function (match) {
+                return `Issue #${match.groups.issue} for ${match.groups.user}/${match.groups.repo}`;
+            },
+            className: "magic-link-github",
+        },
+        {
+            rgx: /^https:\/\/github\.com\/(?<path>.+?)\/?$/,
+            func: (match) => match.groups.path,
+            className: "magic-link-github"
+        },
+        {
+            rgx: /^https:\/\/[A-Za-z0-9]+.atlassian.net\/browse\/(?<ticketNumber>[A-Za-z0-9_.-]+)$/,
+            func: function (match) {
+                return match.groups.ticketNumber;
+            },
+            className: "magic-link-jira",
+        },
+        { // default rule
+            rgx: /.*/,
+            func: (match) => match,
+            className: null
+        }
+    ]
+
+
+    function isCursorInsideToken(cm, lineNo, token) {
+        var cursor = cm.getCursor();
+        var from = Math.max(0, token.start - 1);
+        var to = token.end + 1;
+
+        return cursor.line == lineNo
+            && cursor.ch >= from
+            && cursor.ch <= to;
+    }
+
+    function getMagicLinkForUrl(url) {
+        for (var i = 0; i < magicLinkTemplates.length; i++) {
+            var template = magicLinkTemplates[i];
+            let match = url.match(template.rgx);
+            if (match) {
+                return {
+                    text: template.func(match),
+                    class: template.className
+                };
+            }
+        }
+        return null;
+    }
+
+    function updateMagicLinks() {
+        myCodeMirror.operation(function () {
+
+            //TODO: This may not be needed as we have clearOnEnter...
+            //magicLinkMarks.forEach(function (mark) {
+            //    mark.clear();
+            //});
+            //magicLinkMarks.length = 0;
+
+            for (var lineNo = 0; lineNo < myCodeMirror.lineCount(); lineNo++) {
+                myCodeMirror.getLineTokens(lineNo).forEach(function (token) {
+                    if (!(token.type && token.type.split(/\s+/).includes("link"))
+                        || isCursorInsideToken(myCodeMirror, lineNo, token)
+                        || magicLinkMarks.some(function (mark) {
+                            var range = mark.find();
+                            return range
+                                && range.from.line == lineNo
+                                && range.from.ch == token.start
+                                && range.to.line == lineNo
+                                && range.to.ch == token.end;
+                        })) return;
+
+                    let magicLink = getMagicLinkForUrl(token.string);
+                    if (!magicLink) return;
+
+                    var mark = myCodeMirror.markText(
+                        { line: lineNo, ch: token.start },
+                        { line: lineNo, ch: token.end },
+                        {
+                            replacedWith: (() => {
+                                var link = document.createElement("a");
+                                link.classList.add("cm-link");
+                                link.classList.add("magic-link");
+                                if (magicLink.class) link.classList.add(magicLink.class);
+                                link.dataset.href = token.string;
+                                link.setAttribute("href", token.string);
+                                link.setAttribute("target", "_blank");
+                                link.setAttribute("rel", "noopener noreferrer");
+                                link.textContent = magicLink.text;
+
+                                return link;
+                            })(),
+                            clearOnEnter: true
+                        }
+                    );
+
+                    mark.on("clear", function () {
+                        var idx = magicLinkMarks.indexOf(mark);
+                        if (idx !== -1) magicLinkMarks.splice(idx, 1);
+                    });
+
+                    magicLinkMarks.push(mark);
+                });
+            }
+        });
+    }
+
+    function updateInlineHints() {
+        myCodeMirror.operation(function () {
+            marks.forEach(m => m.clear());
+            marks.length = 0;
+
+            new_hints.forEach(function (hint) {
+                if (!hint) return;
+
+                var lineIdx = hint.line - 1;
+                if (lineIdx >= myCodeMirror.lineCount()) return;
+
+                var msg = document.createElement("span");
+                msg.className = "lint";
+                msg.appendChild(document.createTextNode(hint.message));
+
+                marks.push(myCodeMirror.setBookmark(
+                    { line: lineIdx, ch: myCodeMirror.getLine(lineIdx).length },
+                    { widget: msg }
+                ));
+
+            });
+        });
+        updateMagicLinks();
+    }
+</script>
+
+<script>
+    var widgets = [];
+    var waiting;
+
+    var myCodeMirror = CodeMirror.fromTextArea(document.getElementById("textbox"), {
+        lineNumbers: false,
+        spellcheck: true,
+        mode: "todocss",
+        size: "30px",
+        theme: window.matchMedia('(prefers-color-scheme: dark)').matches ? "material-darker" : "neo",
+        autoCloseBrackets: true,
+        lineWrapping: true,
+        extraKeys: {
+            "Tab": function (cm) {
+                cm.replaceSelection("    ", "end");
+            }
+        },
+        lint: true,
+        gutters: ["CodeMirror-lint-markers"],
+    });
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+        myCodeMirror.setOption("theme", window.matchMedia('(prefers-color-scheme: dark)').matches ? "material-darker" : "neo")
+    });
+
+    // Make wrapped text appear according to current ident lvl
+    // source: https://codemirror.net/5/demo/indentwrap.html
+    var charWidth = myCodeMirror.defaultCharWidth(), basePadding = 4;
+    myCodeMirror.on("renderLine", function (cm, line, elt) {
+        var off = CodeMirror.countColumn(line.text, null, cm.getOption("tabSize")) * charWidth;
+        elt.style.textIndent = "-" + off + "px";
+        elt.style.paddingLeft = (basePadding + off) + "px";
+    });
+    myCodeMirror.refresh();
+
+    myCodeMirror.on("cursorActivity", function (cm) {
+        updateMagicLinks();
+    });
+
+    //// Clickable links
+    //myCodeMirror.on("mousedown", (cm, e) => {
+    //    if (!(e.ctrlKey || e.metaKey)) return;
+    //
+    //    const linkEl = e.target.closest(".cm-link");
+    //    if (!linkEl) return;
+    //
+    //    e.preventDefault();
+    //    e.stopImmediatePropagation();
+    //
+    //    window.open(linkEl.innerText).focus();
+    //});
+
+    var waiting;
+    myCodeMirror.on("change", function () {
+        clearTimeout(waiting);
+        waiting = setTimeout(function () {
+            updateInlineHints();
+            document.dispatchEvent(new CustomEvent("todo:editor-change", {
+                detail: {
+                    getContent: function () {
+                        return myCodeMirror.getValue();
+                    },
+                },
+            }));
+        }, 500);
+    });
+
+    // startup
+    setTimeout(function () {
+        updateInlineHints();
+        document.dispatchEvent(new CustomEvent("todo:editor-change", {
+            detail: {
+                getContent: function () {
+                    return myCodeMirror.getValue();
+                },
+            },
+        }));
+    }, 100);
+
+</script>

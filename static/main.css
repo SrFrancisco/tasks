@@ -6,6 +6,16 @@
     padding-right: 5px;
 }
 
+.popup {
+    position: fixed;
+    bottom: 0;
+    padding: 5px 10px;
+    margin: 10px 5px;
+
+    background-color: #bdbdbd;
+    border: 2px solid black;
+}
+
 .reportProj {
     color: rgb(19, 134, 19);
     border-radius: 5px;
@@ -104,6 +114,11 @@
     width: 100% !important;
 }
 
+.cm-options {
+    color: MediumPurple;
+    font-style: italic;
+}
+
 .outline {
     position: fixed;
     right: 20px;
@@ -188,6 +203,18 @@
     font-size: 0;
 }
 
+.cm-tag-notify::before, .cm-tag-notify-::before {
+    content: "🛎️";
+    position: relative;
+    top: 0px;
+    left: 2px;
+    font-size: large;
+}
+
+.cm-tag-notify, .cm-tag-notify- {
+    font-size: 0;
+}
+
 
 @media (prefers-color-scheme: dark) {
     .cm-heading {
@@ -260,14 +287,29 @@
         background-color: transparent;
         border-color: gray;
     }
+
+    .popup {
+        background-color: #212121;
+        color: #bdbdbd;
+        border-color: #878787;
+    }
+
+    .profiles a:link {
+        color: #bdbdbd;
+    }
+
+    .profiles a:visited {
+        color: #bdbdbd;
+    }
+
 }
 
-.cssError{
-    color: Crimson; 
-    background-color: rgb(255, 224, 230); 
-    font-size: 1.2em; 
-    padding: 5px 10px; 
-    border: 1px solid Crimson; 
+.cssError {
+    color: Crimson;
+    background-color: rgb(255, 224, 230);
+    font-size: 1.2em;
+    padding: 5px 10px;
+    border: 1px solid Crimson;
     position: fixed;
     left: 20px;
     float: left;
@@ -276,10 +318,52 @@
     z-index: 10;
 }
 
-/* Task custom */
-.cm-task_tag{
-  color: DarkGreen;
+.report-pre {
+    font-size: 18px;
+    max-width: 100%;
+    white-space: pre-wrap;
+    white-space: -moz-pre-wrap;
+    white-space: -pre-wrap;
+    white-space: -o-pre-wrap;
+    word-wrap: break-word;
 }
-.cm-task_day{
-  color: CornflowerBlue;
+
+
+.lint {
+    display: inline-block;
+    margin-left: 5px;
+    background: #ffa;
+    color: #a00;
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+
+/*.cm-link {
+    pointer-events: none !important;
+}*/
+
+.cm-link.ctrl-hover {
+    color: #ff5500 !important;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+/* Task custom */
+.cm-task_tag {
+    color: DarkGreen;
+}
+
+.cm-task_day {
+    color: CornflowerBlue;
+}
+
+.profiles {
+    display: inline;
+    position: relative;
+    top: 5px;
+    margin-left: 10px;
+}
+
+.profiles > a {
+    margin-left: 5px;
 }

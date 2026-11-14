@@ -1,0 +1,20 @@
+<script>
+function createPopup(text, duration_ms = 3000) {
+    const existingPopup = document.getElementById("popupId");
+    if (existingPopup) {
+        existingPopup.remove();
+    }
+
+    let popupElem = document.createElement("span");
+    popupElem.classList.add("popup");
+    popupElem.innerHTML = text;
+    popupElem.id = "popupId";
+    document.body.appendChild(popupElem);
+
+    if (duration_ms != -1) {
+        setTimeout(() => {
+            document.body.removeChild(popupElem);
+        }, duration_ms);
+    }
+}
+</script>
